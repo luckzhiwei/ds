@@ -4,17 +4,17 @@ package com.rbtree;
 /**
  * Created by zhiwei on 2017/8/13.
  */
-public class RBTree {
+public class RBTree<T extends Comparable<T>> {
 
 
     public static final int RED = 0;
     public static final int BALCK = 1;
 
-    private Node root;
-    private Node nilT = new Node(0);
+    private Node<T> root;
+    private Node<T> nilT;
 
     public RBTree() {
-        this.nilT = new Node(0);
+        this.nilT = new Node();
         this.nilT.color = BALCK;
         this.nilT.right = this.nilT;
         this.nilT.left = this.nilT;
@@ -62,13 +62,14 @@ public class RBTree {
         x.right = y;
     }
 
-    public void insert(int v) {
+    public void insert(T v) {
         Node z = new Node(v, this.nilT, this.nilT);
         Node y = this.nilT;
         Node x = this.root;
         while (x != this.nilT) {
             y = x;
-            if (z.value < x.value) {
+            int cmp = x.value.compareTo(z.value);
+            if (cmp > 0) {
                 x = x.left;
             } else {
                 x = x.right;
@@ -77,7 +78,7 @@ public class RBTree {
         z.parent = y;
         if (y == this.nilT) {
             this.root = z;
-        } else if (z.value < y.value) {
+        } else if (y.value.compareTo(z.value) > 0) {
             y.left = z;
         } else {
             y.right = z;
@@ -131,9 +132,10 @@ public class RBTree {
     private Node find(int v) {
         Node z = this.root;
         while (z != this.nilT) {
-            if (z.value == v) {
+            int cmp = z.value.compareTo(v);
+            if (cmp == 0) {
                 break;
-            } else if (v > z.value) {
+            } else if (cmp < 0) {
                 z = z.right;
             } else {
                 z = z.left;
@@ -253,7 +255,7 @@ public class RBTree {
 
 
     public static void main(String[] args) {
-        RBTree tree = new RBTree();
+        RBTree<Integer> tree = new RBTree<>();
         int[] numbers = {12, 1, 9, 2, 0, 11, 7, 19, 4, 15, 18, 5, 14, 13, 10, 16, 6, 3, 8, 17};
         for (int num : numbers) {
             tree.insert(num);
