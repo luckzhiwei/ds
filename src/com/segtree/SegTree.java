@@ -4,17 +4,18 @@ package com.segtree;
 /**
  * Created by zhiwei on 2017/9/27.
  */
-public class SegTree {
+public class SegTree<T extends Number> {
 
-    private Node root;
+    private Node<T> root;
     private static int INF = +100000000;
 
-    public SegTree(int arr[]) {
-        this.root = new Node(0, arr.length - 1);
+    public SegTree(T arr[]) {
+        this.root = new Node<>(0, arr.length - 1);
         this.build(this.root, arr, 0, arr.length - 1);
     }
 
-    private int build(Node node, int arr[], int start, int end) {
+    @SuppressWarnings("")
+    private T build(Node node, T arr[], int start, int end) {
         if (start == end) {
             node.value = arr[start];
         } else {
@@ -23,45 +24,55 @@ public class SegTree {
             node.left = new Node(start, mid);
             node.right = new Node(mid + 1, end);
             //在线段树上递归建立节点的过程
-            node.value = Math.min(build(node.left, arr, start, mid), build(node.right, arr, mid + 1, end));
+            T left = build(node.left, arr, start, mid);
+            T right = build(node.right, arr, mid + 1, end);
+            node.value = left.doubleValue() < right.doubleValue() ? left : right;
         }
-        return node.value;
+
+        return (T) node.value;
     }
 
-    private int queryMin(int qStart, int qEnd) {
+    private T queryMin(int qStart, int qEnd) {
         return query(this.root, qStart, qEnd);
     }
 
-    private int query(Node node, int qStart, int qEnd) {
+    private T query(Node node, int qStart, int qEnd) {
         if (node.low > qEnd || node.high < qStart) {
-            return INF;
+            return null;
         } else {
             if (node.low <= qStart && node.high >= qEnd) {
                 // 查询线段包含在当前线段中
-                return node.value;
+                return (T) node.value;
             } else {
                 int mid = (qStart + qEnd) / 2;
-                return Math.min(query(node.left, qStart, mid), query(node.right, mid + 1, qEnd));
+                T left = query(node.left, qStart, mid);
+                T right = query(node.right, mid + 1, qEnd);
+                if (left == null) {
+                    return right;
+                } else if (right == null) {
+                    return left;
+                } else {
+                    return left.doubleValue() < right.doubleValue() ? left : right;
+                }
             }
         }
     }
 
-    private int querySum(int sStart, int sEnd) {
+    private double querySum(int sStart, int sEnd) {
         sStart = sStart < 0 ? 0 : sStart;
         sEnd = sEnd > this.root.high ? this.root.high : sEnd;
         return sum(this.root, sStart, sEnd);
     }
 
-    private int sum(Node node, int sStart, int sEnd) {
+    private double sum(Node node, int sStart, int sEnd) {
         if (node.low > sEnd || node.high < sStart) {
-            return 0;
+            return 0.0f;
         } else {
             if (sStart == sEnd && node.isLeaf()) {
-                return node.value;
+                return ((T) node.value).doubleValue();
             } else if (sStart == node.low && sEnd == node.high) {
                 int mid = (sStart + sEnd) / 2;
-                int ret = sum(node.left, sStart, mid) + sum(node.right, mid + 1, sEnd);
-                return ret;
+                return sum(node.left, sStart, mid) + sum(node.right, mid + 1, sEnd);
             } else {
                 int nMid = (node.low + node.high) / 2;
                 if (nMid >= sEnd) {
@@ -75,9 +86,11 @@ public class SegTree {
         }
     }
 
+
     public static void main(String[] main) {
-        int[] arr = {2, 5, 1, 4, 9, 3};
-        SegTree tree = new SegTree(arr);
+        Integer[] arr = {2, 5, 1, 4, 9, 3};
+
+        SegTree<Integer> tree = new SegTree<>(arr);
         System.out.println(tree.queryMin(0, 2));
         System.out.println(tree.querySum(0, 6));
     }
