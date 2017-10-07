@@ -3,7 +3,7 @@ package com.segtree;
 /**
  * Created by zhiwei on 2017/9/27.
  */
-public class Node<T> {
+public class Node<T extends Number> {
 
     public T value;
     public int low;
