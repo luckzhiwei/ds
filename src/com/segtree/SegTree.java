@@ -14,7 +14,6 @@ public class SegTree<T extends Number> {
         this.build(this.root, arr, 0, arr.length - 1);
     }
 
-    @SuppressWarnings("")
     private T build(Node<T> node, T arr[], int start, int end) {
         if (start == end) {
             node.value = arr[start];

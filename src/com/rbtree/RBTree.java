@@ -17,7 +17,7 @@ public class RBTree<T extends Comparable<T>> {
     private Node<T> nilT;
 
     public RBTree() {
-        this.nilT = new Node();
+        this.nilT = new Node<>();
         this.nilT.color = BALCK;
         this.nilT.right = this.nilT;
         this.nilT.left = this.nilT;
@@ -25,8 +25,8 @@ public class RBTree<T extends Comparable<T>> {
     }
 
 
-    private void leftRotate(Node x) {
-        Node y = x.right;
+    private void leftRotate(Node<T> x) {
+        Node<T> y = x.right;
         x.right = y.left;
         if (y.left != this.nilT) {
             y.left.parent = x;
@@ -45,8 +45,8 @@ public class RBTree<T extends Comparable<T>> {
         x.parent = y;
     }
 
-    private void rightRotate(Node y) {
-        Node x = y.left;
+    private void rightRotate(Node<T> y) {
+        Node<T> x = y.left;
         y.left = x.right;
         if (x.right != this.nilT) {
             x.right.parent = y;
@@ -66,9 +66,9 @@ public class RBTree<T extends Comparable<T>> {
     }
 
     public void insert(T v) {
-        Node z = new Node(v, this.nilT, this.nilT);
-        Node y = this.nilT;
-        Node x = this.root;
+        Node<T> z = new Node<>(v, this.nilT, this.nilT);
+        Node<T> y = this.nilT;
+        Node<T> x = this.root;
         while (x != this.nilT) {
             y = x;
             int cmp = x.value.compareTo(z.value);
@@ -90,8 +90,8 @@ public class RBTree<T extends Comparable<T>> {
         this.rbInsertFixup(z);
     }
 
-    private void rbInsertFixup(Node z) {
-        Node y = null;
+    private void rbInsertFixup(Node<T> z) {
+        Node<T> y = null;
         while (z.parent != null && z.parent.color == RED) {
             //若插入父节点是其祖父节点的左孩子
             if (z.parent == z.parent.parent.left) {
@@ -103,10 +103,11 @@ public class RBTree<T extends Comparable<T>> {
                     z.parent.parent.color = RED;
                     z = z.parent.parent;
                     continue;
-                    //叔父节点是黑色(这里按照算法导论默认nilT也是黑色的)插入节点是其父节点的右儿子,转化为case3
+                    //叔父节点是黑色(这里按照算法导论默认nilT也是黑色的)插入节点是其父节点的右儿子,转化为case2或者case3中的一种情况
                 } else if (z == z.parent.right) {
                     z = z.parent;
                     this.leftRotate(z);
+                    //有可能旋转后就跳出循环，也可能转到case3,把当前节点座位父节点的右子
                 }
                 //叔父节点是黑色，插入节点是其父亲节点的左儿子
                 z.parent.color = BALCK;
@@ -132,8 +133,8 @@ public class RBTree<T extends Comparable<T>> {
         this.root.color = BALCK;
     }
 
-    private Node find(int v) {
-        Node z = this.root;
+    private Node<T> find(T v) {
+        Node<T> z = this.root;
         while (z != this.nilT) {
             int cmp = z.value.compareTo(v);
             if (cmp == 0) {
@@ -147,16 +148,16 @@ public class RBTree<T extends Comparable<T>> {
         return z;
     }
 
-    private Node getSuccessor(Node z) {
+    private Node<T> getSuccessor(Node<T> z) {
         while (z.left != this.nilT) {
             z = z.left;
         }
         return z;
     }
 
-    private void delete(int v) {
-        Node y = null;
-        Node z = this.find(v);
+    private void delete(T v) {
+        Node<T> y = null;
+        Node<T> z = this.find(v);
         if (z != this.nilT) {
             if (z.left == this.nilT || z.right == this.nilT) {
                 y = z;
@@ -190,7 +191,7 @@ public class RBTree<T extends Comparable<T>> {
         }
     }
 
-    private void rbRemoveFixUp(Node x) {
+    private void rbRemoveFixUp(Node<T> x) {
         while (x != this.root && x.color == BALCK) {
             //代替节点是x的左孩子
             if (x == x.parent.left) {

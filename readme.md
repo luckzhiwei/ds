@@ -1,8 +1,5 @@
-### 数据结构
+### 红黑树实现 
 
 
-  * [数组](./src/com/arraylist)
-  * [链表](./src/linklist)
   * [红黑树](./src/com/rbtree)
   * [线段树](./src/com/segtree)
-  * [栈](./src/com/stack)
